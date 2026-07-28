@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Invisible City — Underground Waste Management System</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<!-- background grid / scanline layer -->
+<div class="bg-grid" aria-hidden="true"></div>
+<div class="bg-scan" aria-hidden="true"></div>
+
+<!-- ============ NAV ============ -->
+<header class="topbar">
+  <div class="brand">
+    <svg class="brand-mark" viewBox="0 0 40 40" fill="none">
+      <path d="M20 3 L34 11 V29 L20 37 L6 29 V11 Z" stroke="url(#gradA)" stroke-width="2"/>
+      <circle cx="20" cy="20" r="6" stroke="url(#gradA)" stroke-width="2"/>
+      <path d="M20 3V14M20 26V37M6 11L15 17M34 11L25 17M6 29L15 23M34 29L25 23" stroke="url(#gradA)" stroke-width="1.4" opacity="0.7"/>
+      <defs>
+        <linearGradient id="gradA" x1="0" y1="0" x2="40" y2="40">
+          <stop offset="0" stop-color="#00E6A0"/>
+          <stop offset="1" stop-color="#2FA8FF"/>
+        </linearGradient>
+      </defs>
+    </svg>
+    <div class="brand-text">
+      <span class="brand-name">INVISIBLE&nbsp;CITY</span>
+      <span class="brand-sub">Substratum Operations Grid</span>
+    </div>
+  </div>
+
+  <nav class="tabnav" role="tablist" aria-label="Primary">
+    <button class="tabbtn is-active" data-view="dashboard" role="tab" aria-selected="true">
+      <span class="tabbtn-idx">01</span> Dashboard
+    </button>
+    <button class="tabbtn" data-view="map" role="tab" aria-selected="false">
+      <span class="tabbtn-idx">02</span> City Map
+    </button>
+    <button class="tabbtn" data-view="journey" role="tab" aria-selected="false">
+      <span class="tabbtn-idx">03</span> Waste Journey
+    </button>
+    <button class="tabbtn" data-view="system" role="tab" aria-selected="false">
+      <span class="tabbtn-idx">04</span> System Core
+    </button>
+  </nav>
+
+  <div class="topbar-status">
+    <span class="dot-live"></span>
+    <span id="clock" class="mono">00:00:00</span>
+  </div>
+</header>
+
+<main id="app">
+
+  <!-- ================= VIEW 1: DASHBOARD ================= -->
+  <section class="view is-active" id="view-dashboard">
+
+    <div class="hero">
+      <div class="hero-copy">
+        <p class="eyebrow">LIVE SYSTEM READOUT — SECTOR 7 SUBSTRATUM</p>
+        <h1>The city you never<br>see is <span class="grad-text">working right now.</span></h1>
+        <p class="hero-desc">Forty meters beneath the streets, a closed-loop network of transport tunnels, sorting plants and recovery units converts the surface's waste into clean water, clean air and grid power — continuously, invisibly.</p>
+        <div class="hero-metrics">
+          <div class="hm">
+            <span class="hm-num mono" id="heroWaste">0</span>
+            <span class="hm-label">tonnes processed today</span>
+          </div>
+          <div class="hm">
+            <span class="hm-num mono" id="heroUptime">0</span>
+            <span class="hm-label">% network uptime</span>
+          </div>
+          <div class="hm">
+            <span class="hm-num mono" id="heroEnergy">0</span>
+            <span class="hm-label">MWh returned to grid</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="hero-vis" aria-hidden="true">
+        <svg viewBox="0 0 360 360" class="pulse-ring">
+          <circle cx="180" cy="180" r="150" class="ring ring-1"/>
+          <circle cx="180" cy="180" r="118" class="ring ring-2"/>
+          <circle cx="180" cy="180" r="86" class="ring ring-3"/>
+          <circle cx="180" cy="180" r="150" class="ring-sweep"/>
+        </svg>
+        <div class="hero-vis-core">
+          <span class="mono core-num" id="coreLoad">92%</span>
+          <span class="core-label">network load</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="vision-band">
+      <p class="vision-line">Clean City. <span class="grad-text">Green City.</span> Invisible City.</p>
+      <p class="vision-sub">What you don't see, keeps you safe.</p>
+    </div>
+
+    <div class="terminal-strip">
+      <span class="terminal-dot"></span>
+      <span class="mono terminal-text" id="terminalText">SYSTEM ACTIVE</span><span class="terminal-cursor">▌</span>
+    </div>
+
+    <div class="section-head">
+      <h2><span class="mono idx">§1</span> Live Status Cards</h2>
+      <p class="section-sub">Auto-refreshing telemetry from every subsystem. Values are simulated for demonstration.</p>
+    </div>
+
+    <div class="card-grid" id="statusCards"><!-- injected by JS --></div>
+
+  </section>
+
+  <!-- ================= VIEW 2: CITY MAP ================= -->
+  <section class="view" id="view-map">
+    <div class="section-head">
+      <h2><span class="mono idx">§2</span> Interactive Substratum Map</h2>
+      <p class="section-sub">A cross-section of the underground network. Select any node to open its operations brief.</p>
+    </div>
+
+    <div class="map-wrap">
+      <svg class="citymap" id="citymapSvg" viewBox="0 0 1160 640" role="group" aria-label="Underground city map"></svg>
+    </div>
+
+    <div class="map-legend" id="mapLegend"><!-- injected by JS --></div>
+
+    <p class="map-hint mono">TAP · CLICK · OR PRESS ENTER ON A NODE TO OPEN ITS BRIEF</p>
+  </section>
+
+  <!-- ================= VIEW 3: WASTE JOURNEY ================= -->
+  <section class="view" id="view-journey">
+    <div class="section-head">
+      <h2><span class="mono idx">§3</span> The Waste Journey</h2>
+      <p class="section-sub">One tonne of mixed waste, from curb to city grid — a real sequence, staged end to end.</p>
+    </div>
+
+    <div class="journey" id="journeyTrack">
+      <!-- injected by JS -->
+    </div>
+  </section>
+
+  <!-- ================= VIEW 4: SYSTEM CORE ================= -->
+  <section class="view" id="view-system">
+    <div class="section-head">
+      <h2><span class="mono idx">§4</span> System Core</h2>
+      <p class="section-sub">What this network is built from, what it does, and what the city gets back in return.</p>
+    </div>
+
+    <div class="vision-card">
+      <p class="vision-eyebrow mono">VISION</p>
+      <p class="vision-text">The most important systems of a city are never the ones you can see. Invisible City runs beneath the street — collecting, sorting, recovering and returning — so the surface stays clean, quiet and undisturbed.</p>
+    </div>
+
+    <div class="howworks-block">
+      <h3><span class="sys-ico">①</span> How It Works</h3>
+      <ol class="howworks-list" id="howWorksList"></ol>
+    </div>
+
+    <div class="system-grid">
+
+      <div class="sys-block">
+        <h3><span class="sys-ico">◈</span> System Features</h3>
+        <ul class="sys-list" id="featureList"></ul>
+      </div>
+
+      <div class="sys-block">
+        <h3><span class="sys-ico">▦</span> Underground Zones</h3>
+        <ul class="zone-list" id="zoneList"></ul>
+      </div>
+
+      <div class="sys-block">
+        <h3><span class="sys-ico">⌁</span> Technologies Used</h3>
+        <div class="chip-list" id="techList"></div>
+      </div>
+
+      <div class="sys-block">
+        <h3><span class="sys-ico">↺</span> Output: Supports the City</h3>
+        <ul class="sys-list" id="outputList"></ul>
+      </div>
+
+    </div>
+
+    <div class="electro-card">
+      <div class="electro-copy">
+        <p class="vision-eyebrow mono">ELECTRO-ART DESIGN</p>
+        <h3>The physical twin of this dashboard</h3>
+        <p>This interface mirrors a working tabletop model — built from cardboard, foam board and reclaimed circuit boards, wired with Arduino-driven sensors, servo gates and conveyor motors. Old PCB fragments, resistors and capacitors are arranged as skyline silhouettes, turning the hidden machinery that keeps a city clean into something you can actually see.</p>
+      </div>
+      <div class="electro-vis" aria-hidden="true">
+        <svg viewBox="0 0 200 160">
+          <g class="electro-city">
+            <rect x="10" y="70" width="18" height="70" class="ecity-b1"/>
+            <rect x="34" y="40" width="18" height="100" class="ecity-b2"/>
+            <rect x="58" y="90" width="18" height="50" class="ecity-b1"/>
+            <rect x="82" y="55" width="18" height="85" class="ecity-b2"/>
+            <rect x="106" y="75" width="18" height="65" class="ecity-b1"/>
+            <rect x="130" y="30" width="18" height="110" class="ecity-b2"/>
+            <rect x="154" y="65" width="18" height="75" class="ecity-b1"/>
+            <circle cx="19" cy="82" r="2.4" class="ecity-led"/>
+            <circle cx="43" cy="55" r="2.4" class="ecity-led ecity-led-d"/>
+            <circle cx="91" cy="70" r="2.4" class="ecity-led"/>
+            <circle cx="139" cy="46" r="2.4" class="ecity-led ecity-led-d"/>
+            <circle cx="163" cy="80" r="2.4" class="ecity-led"/>
+            <line x1="0" y1="140" x2="200" y2="140" class="ecity-line"/>
+            <path d="M0,150 L40,150 L40,145 L90,145 L90,155 L150,155 L150,148 L200,148" class="ecity-circuit"/>
+          </g>
+        </svg>
+      </div>
+    </div>
+
+  </section>
+
+</main>
+
+<footer class="sitefoot">
+  <span>INVISIBLE CITY — DEMONSTRATION INTERFACE. ALL TELEMETRY SIMULATED.</span>
+  <span class="mono" id="footYear"></span>
+</footer>
+
+<!-- ============ MODAL ============ -->
+<div class="modal-backdrop" id="modalBackdrop">
+  <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+    <button class="modal-close" id="modalClose" aria-label="Close">✕</button>
+    <div class="modal-icon" id="modalIcon">⚙</div>
+    <p class="modal-eyebrow" id="modalEyebrow">NODE BRIEF</p>
+    <h3 id="modalTitle">Node</h3>
+    <p id="modalBody">Description.</p>
+    <div class="modal-stats" id="modalStats"></div>
+  </div>
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>
